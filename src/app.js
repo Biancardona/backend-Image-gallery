@@ -18,22 +18,22 @@ const allowedOrigins = [
 // Enable CORS for all routes
 // Middleware CORS mejorado
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-
-    if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-        res.header('Access-Control-Allow-Credentials', 'true');
-
-        // Cache CORS preflight para 1 hora (reduce solicitudes OPTIONS)
-        res.header('Access-Control-Max-Age', '3600');
-    }
-
-    // Respuesta inmediata para preflight
-    if (req.method === 'OPTIONS') {
-        return res.status(204).send(); // 204 No Content es mejor para OPTIONS
-    }
+    res.setHeader(
+        "Access-Control-Allow-Origin",
+        "https://frontend-image-gallery.vercel.app"
+    );
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,CONNECT,TRACE"
+    );
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-Content-Type-Options, Accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+    );
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader("Access-Control-Allow-Private-Network", true);
+    //  Firefox caps this at 24 hours (86400 seconds). Chromium (starting in v76) caps at 2 hours (7200 seconds). The default value is 5 seconds.
+    res.setHeader("Access-Control-Max-Age", 7200);
 
     next();
 });
