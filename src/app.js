@@ -9,8 +9,16 @@ const userRoutes = require('./routes/user.routes');
 
 const app = express();
 
+// CORS configuration
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 dotenv.config();
@@ -18,18 +26,10 @@ dotenv.config();
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.use(cors({
-    origin: 'frontend-image-gallery.vercel.app',
-    credentials: true
-}));
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/users', userRoutes);
-
-
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {
