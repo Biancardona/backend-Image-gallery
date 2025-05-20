@@ -16,22 +16,30 @@ const allowedOrigins = [
 ];
 
 // Enable CORS for all routes
+// Middleware CORS mejorado
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+        res.header('Access-Control-Allow-Credentials', 'true');
+
+        // Cache CORS preflight para 1 hora (reduce solicitudes OPTIONS)
+        res.header('Access-Control-Max-Age', '3600');
     }
+
+    // Respuesta inmediata para preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(204).send(); // 204 No Content es mejor para OPTIONS
+    }
+
     next();
 });
 
+app.options('*', cors(corsOptions)); // Maneja todas las solicitudes OPTIONS
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
