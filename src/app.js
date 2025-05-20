@@ -11,7 +11,7 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-    'https://frontend-image-gallery.vercel.app',
+    'https://frontend-image-gallery.vercel.app/api',
     'http://localhost:3000'
 ];
 
