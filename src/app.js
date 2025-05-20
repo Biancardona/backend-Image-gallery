@@ -1,5 +1,6 @@
+
+require('dotenv').config();
 const express = require('express');
-import dotenv from "dotenv";
 const cors = require('cors');
 const path = require('path');
 const { sequelize } = require('./config/database');
@@ -18,10 +19,11 @@ const corsOptions = {
 };
 
 // Middleware
-app.use(cors(corsOptions));
+app.use(cors({
+    origin: '*',
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-dotenv.config();
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
