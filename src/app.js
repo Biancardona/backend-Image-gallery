@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -11,17 +10,34 @@ const userRoutes = require('./routes/user.routes');
 const app = express();
 
 // CORS configuration
+const allowedDomains = [process.env.FRONTEND_URL];
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    origin: function (origin, callback) {
+        if (allowedDomains.indexOf(origin) !== -1) {
+            //Request oorigin is allowed
+            callback(null, true);
+        } else {
+            callback(new Error("No permitido por CORS"));
+        }
+    },
 };
-
 // Middleware
 app.use(cors({
-    origin: '*',
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
 }));
+//Allow express use CorsOptions
+app.use(
+    cors({
+        origin: '*',
+    }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
